@@ -1,5 +1,4 @@
-﻿import * as client from 'clientlibs.IdServerClient';
-import * as crudPage from 'hr.widgets.CrudPage';
+﻿import * as crudPage from 'hr.widgets.CrudPage';
 import * as controller from 'hr.controller';
 import * as UserSearchController from 'spc.roleclient.UserSearchController';
 import * as userDirClient from 'spc.roleclient.UserDirectoryClient';

@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": true,
+    "target": "es5",
+    "outDir": "obj/tsc",
+    "module": "amd",
+    "baseUrl": ".",
+    "paths": {
+      "hr.*": [
+        "node_modules/HtmlRapier/src/*"
+      ],
+      "hr.widgets.*": [
+        "node_modules/htmlrapier.widgets/src/*"
+      ],
+      "jdorn.*":[
+        "node_modules/htmlrapier.json-editor/*"
+      ],
+      "hr.halcyon.*": [
+        "node_modules/HtmlRapier.Halcyon/src/*"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "obj"
+  ],
+  "compileOnSave": true
+}
