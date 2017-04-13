@@ -8,10 +8,6 @@ export interface RoleAssignmentsResult {
 
     canRefresh(): boolean;
 
-    getRefreshDocs(): Promise<hal.HalEndpointDoc>;
-
-    hasRefreshDocs(): boolean;
-
     save(data: RoleAssignments): Promise<RoleAssignmentsResult>;
 
     canSave(): boolean;
@@ -25,6 +21,44 @@ export interface RoleAssignmentsResult {
     canDeleteUser(): boolean;
 }
 
+/**
+ * Make sure the passed in object is a correct RoleAssignmentsResult, this will return true on success and throw
+ * an error on failure.
+ * @param t
+ */
+export function IsRoleAssignmentsResult(t: RoleAssignmentsResult): t is RoleAssignmentsResult{
+    var errors = "";
+    if (t.refresh === undefined) {
+        errors += "refresh(): Promise<RoleAssignmentsResult>.\n";
+    }
+    if (t.canRefresh === undefined) {
+        errors += "canRefresh(): boolean.\n";
+    }
+    if (t.save === undefined) {
+        errors += "save(data: RoleAssignments): Promise<RoleAssignmentsResult>.\n";
+    }
+    if (t.canSave === undefined) {
+        errors += "canSave(): boolean.\n";
+    }
+    if (t.getSaveDocs === undefined) {
+        errors += "getSaveDocs(): Promise<hal.HalEndpointDoc>.\n";
+    }
+    if (t.hasSaveDocs === undefined) {
+        errors += "hasSaveDocs(): boolean.\n";
+    }
+    if (t.deleteUser === undefined) {
+        errors += "deleteUser().\n";
+    }
+    if (t.canDeleteUser === undefined) {
+        errors += "canDeleteUser(): boolean.\n";
+    }
+    if (errors !== "") {
+        errors = "Cannot accept RoleAssignmentResult. The following functions are missing:\n" + errors;
+        throw new Error(errors);
+    }
+    return true;
+}
+
 export class IRoleEntryInjector{
     
 }
@@ -34,37 +68,59 @@ export interface EntryPointInjector {
 }
 
 export interface EntryPointResult {
-    refresh(): Promise<EntryPointResult>;
+    getUser(): Promise<RoleAssignmentsResult>;
 
-    canRefresh(): boolean;
+    canGetUser(): boolean;
 
-    getRefreshDocs(): Promise<hal.HalEndpointDoc>;
-
-    hasRefreshDocs(): boolean;
-
-    getRoles(query: RolesQuery): Promise<RoleAssignmentsResult>;
-
-    canGetRoles(): boolean;
-
-    getGetRolesDocs(): Promise<hal.HalEndpointDoc>;
-
-    hasGetRolesDocs(): boolean;
-
-    listUsers(query: PagedCollectionQuery): Promise<UserCollectionResult>;
+    listUsers(query: RoleQuery): Promise<UserCollectionResult>;
 
     canListUsers(): boolean;
 
-    getListUsersDocs(): Promise<hal.HalEndpointDoc>;
+    setUser(data: RoleAssignments): Promise<RoleAssignmentsResult>;
 
-    hasListUsersDocs(): boolean;
+    canSetUser(): boolean;
 
-    setRoles(data: RoleAssignments): Promise<RoleAssignmentsResult>;
+    getSetUserDocs(): Promise<hal.HalEndpointDoc>;
 
-    canSetRoles(): boolean;
+    hasSetUserDocs(): boolean;
+}
 
-    getSetRolesDocs(): Promise<hal.HalEndpointDoc>;
-
-    hasSetRolesDocs(): boolean;
+/**
+ * Make sure the passed in object is a correct EntryPointResult, this will return true on success and throw
+ * an error on failure.
+ * @param t
+ */
+export function IsEntryPointResult(t: EntryPointResult): t is EntryPointResult {
+    var errors = "";
+    if (t.getUser === undefined) {
+        errors += "getUser(query: RolesQuery): Promise<RoleAssignmentsResult>.\n";
+    }
+    if (t.canGetUser === undefined) {
+        errors += "canGetUser(): boolean.\n";
+    }
+    if (t.listUsers === undefined) {
+        errors += "listUsers(query: PagedCollectionQuery): Promise<UserCollectionResult>\n";
+    }
+    if (t.canListUsers === undefined) {
+        errors += "canListUsers(): boolean;";
+    }
+    if (t.setUser === undefined) {
+        errors += "setUser(data: RoleAssignments): Promise<RoleAssignmentsResult>\n";
+    }
+    if (t.canSetUser === undefined) {
+        errors += "canSetUser(): boolean\n";
+    }
+    if (t.getSetUserDocs === undefined) {
+        errors += "getSetUserDocs(): Promise<hal.HalEndpointDoc>\n";
+    }
+    if (t.hasSetUserDocs === undefined) {
+        errors += "hasSetUserDocs(): boolean\n";
+    }
+    if (errors !== "") {
+        errors = "Cannot accept RoleAssignmentResult. The following functions are missing:\n" + errors;
+        throw new Error(errors);
+    }
+    return true;
 }
 
 export interface UserCollectionResult {
@@ -112,16 +168,15 @@ export interface UserCollectionResult {
 
     hasLastDocs(): boolean;
 }
-export interface RolesQuery {
-    userId?: string;
-    name?: string;
-}
+
 export interface RoleAssignments {
     name?: string;
     editRoles?: boolean;
     superAdmin?: boolean;
 }
-export interface PagedCollectionQuery {
+export interface RoleQuery {
+    userId?: string;
+    name?: string;
     offset?: number;
     limit?: number;
 }

@@ -19,7 +19,7 @@ export class CrudService
     TResultCollection extends client.UserCollectionResult,
     TEdit extends client.RoleAssignments,
     TEntryResult extends client.EntryPointResult,
-    TListQueryType extends client.PagedCollectionQuery,
+    TListQueryType extends client.RoleQuery,
     >
     extends crudPage.HypermediaCrudService
     implements CrudServiceExtensions {
@@ -36,11 +36,15 @@ export class CrudService
     }
 
     protected async getActualSchema(entryPoint: TEntryResult) {
-        return entryPoint.getSetRolesDocs();
+        if (client.IsEntryPointResult(entryPoint)) {
+            return entryPoint.getSetUserDocs();
+        }
     }
 
     public canAddItem(entryPoint: TEntryResult): boolean {
-        return entryPoint.canSetRoles();
+        if (client.IsEntryPointResult(entryPoint)) {
+            return entryPoint.canSetUser();
+        }
     }
 
     public async add(item?: any) {
@@ -48,7 +52,9 @@ export class CrudService
     }
 
     protected commitAdd(entryPoint: TEntryResult, data: TEdit) {
-        return entryPoint.setRoles(data);
+        if (client.IsEntryPointResult(entryPoint)) {
+            return entryPoint.setUser(data);
+        }
     }
 
     protected async getEditObject(item: TResult) {
@@ -60,7 +66,9 @@ export class CrudService
     }
 
     protected commitEdit(data: TEdit, item: TResult) {
-        return item.save(data);
+        if (client.IsRoleAssignmentsResult(item)) {
+            return item.save(data);
+        }
     }
 
     public getDeletePrompt(item: TResult): string {
@@ -68,34 +76,47 @@ export class CrudService
     }
 
     protected commitDelete(item: TResult) {
-        return item.deleteUser();
+        if (client.IsRoleAssignmentsResult(item)) {
+            return item.deleteUser();
+        }
     }
 
     protected canList(entryPoint: TEntryResult): boolean {
-        return entryPoint.canListUsers();
+        if (client.IsEntryPointResult(entryPoint)) {
+            return entryPoint.canListUsers();
+        }
     }
 
     protected list(entryPoint: TEntryResult, query: TListQueryType): Promise<TResultCollection> {
-        return entryPoint.listUsers(query);
+        if (client.IsEntryPointResult(entryPoint)) {
+            return entryPoint.listUsers(query);
+        }
     }
 
     public canEdit(item: TResult): boolean {
-        return item.canSave();
+        if (client.IsRoleAssignmentsResult(item)) {
+            return item.canSave();
+        }
     }
 
     public canDel(item: TResult): boolean {
-        return item.canDeleteUser();
+        if (client.IsRoleAssignmentsResult(item)) {
+            return item.canDeleteUser();
+        }
     }
 
     public async editUserRoles(userId: string, name: string) {
         var entryPoint = await this.entryInjector.load();
-        if (!entryPoint.canSetRoles()) {
+        if (!entryPoint.canSetUser()) {
             throw new Error("No permission to set roles.");
         }
 
-        var roles = await entryPoint.getRoles({
+        var roles = await entryPoint.listUsers({
             userId: userId,
             name: name
+        })
+        .then(r => {
+            return r.items[0];
         });
 
         this.editData(roles, Promise.resolve(roles.data));
