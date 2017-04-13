@@ -1,4 +1,5 @@
-﻿import * as crudPage from 'hr.widgets.CrudPage';
+﻿import * as client from 'spc.roleclient.RoleClient';
+import * as crudPage from 'hr.widgets.CrudPage';
 import * as controller from 'hr.controller';
 import * as UserSearchController from 'spc.roleclient.UserSearchController';
 import * as userDirClient from 'spc.roleclient.UserDirectoryClient';
@@ -17,19 +18,19 @@ export class CrudService
     TResult extends client.RoleAssignmentsResult,
     TResultCollection extends client.UserCollectionResult,
     TEdit extends client.RoleAssignments,
-    TEntryResult extends client.EntryPointsResult,
+    TEntryResult extends client.EntryPointResult,
     TListQueryType extends client.PagedCollectionQuery,
     >
     extends crudPage.HypermediaCrudService
     implements CrudServiceExtensions {
 
-    private entryInjector: client.EntryPointsInjector;
+    private entryInjector: client.EntryPointInjector;
 
     public static get InjectorArgs(): controller.DiFunction<any>[] {
-        return [client.EntryPointsInjector, UserSearchController.UserSearchController];
+        return [client.IRoleEntryInjector, UserSearchController.UserSearchController];
     }
 
-    constructor(entry: client.EntryPointsInjector, private userSearchController: UserSearchController.UserSearchController) {
+    constructor(entry: client.EntryPointInjector, private userSearchController: UserSearchController.UserSearchController) {
         super(entry);
         this.entryInjector = entry;
     }
