@@ -67,7 +67,7 @@ export class CrudService
 
     protected commitEdit(data: TEdit, item: TResult) {
         if (client.IsRoleAssignmentsResult(item)) {
-            return item.save(data);
+            return item.setUser(data);
         }
     }
 
@@ -95,7 +95,7 @@ export class CrudService
 
     public canEdit(item: TResult): boolean {
         if (client.IsRoleAssignmentsResult(item)) {
-            return item.canSave();
+            return item.canSetUser();
         }
     }
 

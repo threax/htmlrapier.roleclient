@@ -8,13 +8,13 @@ export interface RoleAssignmentsResult {
 
     canRefresh(): boolean;
 
-    save(data: RoleAssignments): Promise<RoleAssignmentsResult>;
+    setUser(data: RoleAssignments): Promise<RoleAssignmentsResult>;
 
-    canSave(): boolean;
+    canSetUser(): boolean;
 
-    getSaveDocs(): Promise<hal.HalEndpointDoc>;
+    getSetUserDocs(): Promise<hal.HalEndpointDoc>;
 
-    hasSaveDocs(): boolean;
+    hasSetUserDocs(): boolean;
 
     deleteUser();
 
@@ -34,17 +34,17 @@ export function IsRoleAssignmentsResult(t: RoleAssignmentsResult): t is RoleAssi
     if (t.canRefresh === undefined) {
         errors += "canRefresh(): boolean.\n";
     }
-    if (t.save === undefined) {
-        errors += "save(data: RoleAssignments): Promise<RoleAssignmentsResult>.\n";
+    if (t.setUser === undefined) {
+        errors += "setUser(data: RoleAssignments): Promise<RoleAssignmentsResult>.\n";
     }
-    if (t.canSave === undefined) {
-        errors += "canSave(): boolean.\n";
+    if (t.canSetUser === undefined) {
+        errors += "canSetUser(): boolean.\n";
     }
-    if (t.getSaveDocs === undefined) {
-        errors += "getSaveDocs(): Promise<hal.HalEndpointDoc>.\n";
+    if (t.getSetUserDocs === undefined) {
+        errors += "getSetUserDocs(): Promise<hal.HalEndpointDoc>.\n";
     }
-    if (t.hasSaveDocs === undefined) {
-        errors += "hasSaveDocs(): boolean.\n";
+    if (t.hasSetUserDocs === undefined) {
+        errors += "hasSetUserDocs(): boolean.\n";
     }
     if (t.deleteUser === undefined) {
         errors += "deleteUser().\n";
