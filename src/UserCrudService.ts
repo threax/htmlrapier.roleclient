@@ -148,7 +148,7 @@ export class UserResultController {
 }
 
 export function addServices(services: controller.ServiceCollection) {
-    services.tryAddSingleton(UserSearchController.UserSearchController, UserSearchController.UserSearchController); //This is overridden to be a singleton, only support 1 user search per page
-    services.tryAddScoped(UserSearchController.IUserResultController, UserResultController);
-    services.tryAddSingleton(crudPage.ICrudService, CrudService);
+    services.tryAddShared(UserSearchController.UserSearchController, UserSearchController.UserSearchController); //This is overridden to be a singleton, only support 1 user search per page
+    services.tryAddTransient(UserSearchController.IUserResultController, UserResultController);
+    services.tryAddShared(crudPage.ICrudService, CrudService);
 }

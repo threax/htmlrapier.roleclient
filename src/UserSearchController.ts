@@ -116,7 +116,7 @@ export class UserResultController {
 
 export function AddServices(services: controller.ServiceCollection) {
     inputPage.AddServices(services);
-    services.tryAddScoped(UserSearchControllerOptions, s => new UserSearchControllerOptions());
-    services.tryAddScoped(UserSearchController, UserSearchController);
-    services.tryAddScoped(IUserResultController, UserResultController);
+    services.tryAddTransient(UserSearchControllerOptions, s => new UserSearchControllerOptions());
+    services.tryAddTransient(UserSearchController, UserSearchController);
+    services.tryAddTransient(IUserResultController, UserResultController);
 }
