@@ -170,6 +170,7 @@ export interface UserCollectionResult {
 }
 
 export interface RoleAssignments {
+    userId?: string;
     name?: string;
     editRoles?: boolean;
     superAdmin?: boolean;
