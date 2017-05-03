@@ -176,7 +176,7 @@ export interface RoleAssignments {
     superAdmin?: boolean;
 }
 export interface RoleQuery {
-    userId?: string;
+    userId?: string[];
     name?: string;
     offset?: number;
     limit?: number;

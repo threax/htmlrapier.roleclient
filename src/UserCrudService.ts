@@ -112,7 +112,7 @@ export class CrudService
         }
 
         var roles = await entryPoint.listUsers({
-            userId: userId,
+            userId: [userId],
             name: name
         })
         .then(r => {
