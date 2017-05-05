@@ -41,6 +41,10 @@ export class CrudService
         }
     }
 
+    protected async getActualSearchSchema(entryPoint: TEntryResult) {
+        throw new Error("getActualSearchSchema Not supported");
+    }
+
     public canAddItem(entryPoint: TEntryResult): boolean {
         if (client.IsEntryPointResult(entryPoint)) {
             return entryPoint.canSetUser();
