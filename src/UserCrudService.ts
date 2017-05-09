@@ -19,7 +19,7 @@ export class CrudService
     TResultCollection extends client.UserCollectionResult,
     TEdit extends client.RoleAssignments,
     TEntryResult extends client.EntryPointResult,
-    TListQueryType extends client.RoleQuery,
+    TListQueryType extends client.RoleQuery
     >
     extends crudPage.HypermediaCrudService
     implements CrudServiceExtensions {
