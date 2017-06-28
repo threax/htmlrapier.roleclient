@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "spc.roleclient.*": [
+        "src/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
+}
