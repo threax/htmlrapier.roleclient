@@ -91,7 +91,7 @@ export class CrudService
         }
     }
 
-    protected list(entryPoint: TEntryResult, query: TListQueryType): Promise<TResultCollection> {
+    protected list(entryPoint: TEntryResult, query: TListQueryType): Promise<client.UserCollectionResult> {
         if (client.IsEntryPointResult(entryPoint)) {
             return entryPoint.listUsers(query);
         }
