@@ -4,6 +4,7 @@ import * as controller from 'hr.controller';
 import * as UserSearchController from 'spc.roleclient.UserSearchController';
 import * as userDirClient from 'spc.roleclient.UserDirectoryClient';
 import * as events from 'hr.eventdispatcher';
+import * as hyperShim from 'spc.roleclient.UserHypermediaCrudShim';
 
 export interface CrudServiceExtensions {
     editUserRoles(userId: string, name: string): Promise<any>;
@@ -21,7 +22,7 @@ export class CrudService
     TEntryResult extends client.EntryPointResult,
     TListQueryType extends client.RoleQuery
     >
-    extends crudPage.HypermediaCrudService
+    extends hyperShim.HypermediaCrudService
     implements CrudServiceExtensions {
 
     private entryInjector: client.EntryPointInjector;
