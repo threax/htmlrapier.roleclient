@@ -1,11 +1,10 @@
 {
   "name": "spc.roleclient",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "private": true,
   "dependencies": {
     "htmlrapier.halcyon": ">=6.0.0",
     "htmlrapier.widgets": ">=6.1.0",
-    "htmlrapier.json-editor": ">=4.2.0",
     "jsns": ">=4.2.2"
   }
 }
