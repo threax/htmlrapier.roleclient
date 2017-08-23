@@ -1,6 +1,6 @@
 {
   "name": "spc.roleclient",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "private": true,
   "dependencies": {
     "htmlrapier.halcyon": ">=6.0.0",

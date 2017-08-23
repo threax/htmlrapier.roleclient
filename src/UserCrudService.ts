@@ -34,6 +34,9 @@ export class CrudService
     constructor(entry: client.EntryPointInjector, private userSearchController: UserSearchController.UserSearchController) {
         super(entry);
         this.entryInjector = entry;
+        this.userSearchController.onAddManually.add(data => {
+            this.editUserRoles(data.id, data.name);
+        });
     }
 
     protected async getActualSchema(entryPoint: TEntryResult) {

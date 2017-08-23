@@ -3,12 +3,14 @@ import * as controller from 'hr.controller';
 import { MainLoadErrorLifecycle } from 'hr.widgets.MainLoadErrorLifecycle';
 import * as iter from 'hr.iterable';
 import * as inputPage from 'hr.widgets.InputPage';
+import * as event from 'hr.eventdispatcher';
 
 export class UserSearchControllerOptions {
     mainToggleName: string = "main";
     errorToggleName: string = "error";
     loadToggleName: string = "load";
     dialogToggleName: string = "dialog";
+    guidFormName: string = "fromGuidForm";
     setLoadingOnStart: boolean = true;
 }
 
@@ -16,9 +18,17 @@ export interface SearchTermModel {
     term: string;
 }
 
+export interface FromGuidModel {
+    id: string;
+    name: string;
+}
+
 export class UserSearchController {
     public static get InjectorArgs(): controller.DiFunction<any>[] {
-        return [controller.BindingCollection, UserSearchControllerOptions, controller.InjectedControllerBuilder, Client.EntryPointInjector];
+        return [controller.BindingCollection,
+                UserSearchControllerOptions,
+                controller.InjectedControllerBuilder,
+                Client.EntryPointInjector];
     }
 
     private options: UserSearchControllerOptions;
@@ -29,9 +39,16 @@ export class UserSearchController {
     private lifecycle: MainLoadErrorLifecycle;
     private entryPoint: Client.EntryPointResult;
     private dialogToggle: controller.OnOffToggle;
+    private addManuallyEvent: event.ActionEventDispatcher<FromGuidModel> = new event.ActionEventDispatcher<FromGuidModel>();
+    private guidForm: controller.IForm<FromGuidModel>;
 
-    constructor(bindings: controller.BindingCollection, settings: UserSearchControllerOptions, private builder: controller.InjectedControllerBuilder, private entryPointInjector: Client.EntryPointInjector) {
+    constructor(bindings: controller.BindingCollection,
+                settings: UserSearchControllerOptions,
+                private builder: controller.InjectedControllerBuilder,
+                private entryPointInjector: Client.EntryPointInjector)
+    {
         this.options = settings;
+        this.guidForm = bindings.getForm<FromGuidModel>(settings.guidFormName);
         this.searchModel = bindings.getModel<SearchTermModel>("search");
         this.searchResultsModel = bindings.getModel<Client.Person>("searchResults");
         this.noResultsModel = bindings.getModel<SearchTermModel>("noResults");
@@ -59,6 +76,10 @@ export class UserSearchController {
         this.dialogToggle.off();
     }
 
+    public get onAddManually() {
+        return this.addManuallyEvent.modifier;
+    }
+
     private async setup() {
         try {
             this.entryPoint = await this.entryPointInjector.load();
@@ -77,26 +98,31 @@ export class UserSearchController {
         }
     }
 
-    runSearch(evt: Event) {
+    public async runSearch(evt: Event): Promise<void> {
         evt.preventDefault();
         this.lifecycle.showLoad();
         var searchData = this.searchModel.getData();
-        this.entryPoint.searchUsers(searchData)
-            .then(data => {
-                var listingCreator = this.builder.createOnCallback(IUserResultController);
-                var items = data.items;
-                this.searchResultsModel.clear();
-                for (var i = 0; i < items.length; ++i) {
-                    var itemData = items[i].data;
-                    this.searchResultsModel.appendData(itemData, (b, d) => {
-                        listingCreator(b, items[i]);
-                    });
-                }
-                this.lifecycle.showMain();
-            })
-            .catch(err => {
-                this.lifecycle.showError(err);
-            });
+        try {
+            var data = await this.entryPoint.searchUsers(searchData);
+            var listingCreator = this.builder.createOnCallback(IUserResultController);
+            var items = data.items;
+            this.searchResultsModel.clear();
+            for (var i = 0; i < items.length; ++i) {
+                var itemData = items[i].data;
+                this.searchResultsModel.appendData(itemData, (b, d) => {
+                    listingCreator(b, items[i]);
+                });
+            }
+            this.lifecycle.showMain();
+        }
+        catch (err) {
+            this.lifecycle.showError(err);
+        }
+    }
+
+    public addFromGuid(evt: Event): void {
+        evt.preventDefault();
+        this.addManuallyEvent.fire(this.guidForm.getData());
     }
 }
 
