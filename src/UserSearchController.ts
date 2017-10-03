@@ -2,7 +2,6 @@
 import * as controller from 'hr.controller';
 import { MainLoadErrorLifecycle } from 'hr.widgets.MainLoadErrorLifecycle';
 import * as iter from 'hr.iterable';
-import * as inputPage from 'hr.widgets.InputPage';
 import * as event from 'hr.eventdispatcher';
 
 export class UserSearchControllerOptions {
@@ -141,7 +140,6 @@ export class UserResultController {
 }
 
 export function AddServices(services: controller.ServiceCollection) {
-    inputPage.AddServices(services);
     services.tryAddTransient(UserSearchControllerOptions, s => new UserSearchControllerOptions());
     services.tryAddTransient(UserSearchController, UserSearchController);
     services.tryAddTransient(IUserResultController, UserResultController);
