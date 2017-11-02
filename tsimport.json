@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "paths": {
-      "spc.roleclient.*": [
+      "hr.roleclient.*": [
         "src/*"
       ]
     }

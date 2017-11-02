@@ -1,10 +1,10 @@
-﻿import * as client from 'spc.roleclient.RoleClient';
+﻿import * as client from 'hr.roleclient.RoleClient';
 import * as crudPage from 'hr.widgets.CrudPage';
 import * as controller from 'hr.controller';
-import * as UserSearchController from 'spc.roleclient.UserSearchController';
-import * as userDirClient from 'spc.roleclient.UserDirectoryClient';
+import * as UserSearchController from 'hr.roleclient.UserSearchController';
+import * as userDirClient from 'hr.roleclient.UserDirectoryClient';
 import * as events from 'hr.eventdispatcher';
-import * as hyperShim from 'spc.roleclient.UserHypermediaCrudShim';
+import * as hyperShim from 'hr.roleclient.UserHypermediaCrudShim';
 
 export interface CrudServiceExtensions {
     editUserRoles(userId: string, name: string): Promise<any>;

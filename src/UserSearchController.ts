@@ -1,4 +1,4 @@
-﻿import * as Client from 'spc.roleclient.UserDirectoryClient';
+﻿import * as Client from 'hr.roleclient.UserDirectoryClient';
 import * as controller from 'hr.controller';
 import { MainLoadErrorLifecycle } from 'hr.widgets.MainLoadErrorLifecycle';
 import * as iter from 'hr.iterable';
