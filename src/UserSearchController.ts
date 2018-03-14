@@ -148,7 +148,10 @@ export class UserSearchController implements crudItemEditor.CrudItemEditorContro
             name: manualData.name
         });
 
-        this.crudService.edit(roles.items[0]);
+        var shadow = Object.create(roles.items[0]);
+        shadow.canRefresh = () => false;
+
+        this.crudService.edit(shadow);
     }
 }
 
