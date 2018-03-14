@@ -5,6 +5,8 @@ import * as iter from 'hr.iterable';
 import * as event from 'hr.eventdispatcher';
 import * as crudItemEditor from 'hr.widgets.CrudItemEditor';
 import { ICrudService, ItemEditorClosedCallback, ItemUpdatedCallback, ShowItemEditorEventArgs } from 'hr.widgets.CrudService';
+import { UserCrudInjector } from 'hr.roleclient.UserCrudInjector';
+import * as hyperCrudPage from 'hr.widgets.HypermediaCrudService';
 
 export class UserSearchControllerOptions {
     mainToggleName: string = "main";
@@ -30,7 +32,8 @@ export class UserSearchController implements crudItemEditor.CrudItemEditorContro
                 UserSearchControllerOptions,
                 controller.InjectedControllerBuilder,
                 Client.EntryPointInjector,
-                ICrudService];
+                ICrudService, 
+                hyperCrudPage.HypermediaPageInjector];
     }
 
     private options: UserSearchControllerOptions;
@@ -48,7 +51,8 @@ export class UserSearchController implements crudItemEditor.CrudItemEditorContro
                 settings: UserSearchControllerOptions,
                 private builder: controller.InjectedControllerBuilder,
                 private entryPointInjector: Client.EntryPointInjector,
-                crudService: ICrudService)
+                private crudService: ICrudService, 
+                private userCrudInjector: UserCrudInjector)
     {
         this.options = settings;
         this.guidForm = bindings.getForm<FromGuidModel>(settings.guidFormName);
@@ -68,11 +72,15 @@ export class UserSearchController implements crudItemEditor.CrudItemEditorContro
 
         this.lifecycle.showLoad();
 
-        crudService.showAddItemEvent.add(arg => {
+        this.crudService.showAddItemEvent.add(arg => {
             this.show();
         });
 
-        crudService.closeItemEditorEvent.add(() => {
+        this.crudService.showItemEditorEvent.add(arg => {
+            this.hide();
+        });
+
+        this.crudService.closeItemEditorEvent.add(() => {
             this.dialogToggle.off();
         });
 
@@ -85,10 +93,6 @@ export class UserSearchController implements crudItemEditor.CrudItemEditorContro
 
     public hide() {
         this.dialogToggle.off();
-    }
-
-    public get onAddManually() {
-        return this.addManuallyEvent.modifier;
     }
 
     private async setup() {
@@ -131,9 +135,20 @@ export class UserSearchController implements crudItemEditor.CrudItemEditorContro
         }
     }
 
-    public addFromGuid(evt: Event): void {
+    public async addFromGuid(evt: Event): Promise<void> {
         evt.preventDefault();
-        this.addManuallyEvent.fire(this.guidForm.getData());
+        if (await !this.userCrudInjector.canList()) {
+            throw new Error("No permission to set roles.");
+        }
+
+        var manualData = this.guidForm.getData();
+
+        var roles = await this.userCrudInjector.list({
+            userId: [manualData.id],
+            name: manualData.name
+        });
+
+        this.crudService.edit(roles.items[0]);
     }
 }
 
