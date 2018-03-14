@@ -3,6 +3,8 @@ import * as controller from 'hr.controller';
 import { MainLoadErrorLifecycle } from 'hr.widgets.MainLoadErrorLifecycle';
 import * as iter from 'hr.iterable';
 import * as event from 'hr.eventdispatcher';
+import * as crudItemEditor from 'hr.widgets.CrudItemEditor';
+import { ICrudService, ItemEditorClosedCallback, ItemUpdatedCallback, ShowItemEditorEventArgs } from 'hr.widgets.CrudService';
 
 export class UserSearchControllerOptions {
     mainToggleName: string = "main";
@@ -22,12 +24,13 @@ export interface FromGuidModel {
     name: string;
 }
 
-export class UserSearchController {
+export class UserSearchController implements crudItemEditor.CrudItemEditorController {
     public static get InjectorArgs(): controller.DiFunction<any>[] {
         return [controller.BindingCollection,
                 UserSearchControllerOptions,
                 controller.InjectedControllerBuilder,
-                Client.EntryPointInjector];
+                Client.EntryPointInjector,
+                ICrudService];
     }
 
     private options: UserSearchControllerOptions;
@@ -44,7 +47,8 @@ export class UserSearchController {
     constructor(bindings: controller.BindingCollection,
                 settings: UserSearchControllerOptions,
                 private builder: controller.InjectedControllerBuilder,
-                private entryPointInjector: Client.EntryPointInjector)
+                private entryPointInjector: Client.EntryPointInjector,
+                crudService: ICrudService)
     {
         this.options = settings;
         this.guidForm = bindings.getForm<FromGuidModel>(settings.guidFormName);
@@ -63,6 +67,14 @@ export class UserSearchController {
             settings.setLoadingOnStart);
 
         this.lifecycle.showLoad();
+
+        crudService.showAddItemEvent.add(arg => {
+            this.show();
+        });
+
+        crudService.closeItemEditorEvent.add(() => {
+            this.dialogToggle.off();
+        });
 
         this.setup();
     }
@@ -141,6 +153,6 @@ export class UserResultController {
 
 export function AddServices(services: controller.ServiceCollection) {
     services.tryAddTransient(UserSearchControllerOptions, s => new UserSearchControllerOptions());
-    services.tryAddTransient(UserSearchController, UserSearchController);
+    services.tryAddSharedId(crudItemEditor.CrudItemEditorType.Add, crudItemEditor.CrudItemEditorController, UserSearchController);
     services.tryAddTransient(IUserResultController, UserResultController);
 }

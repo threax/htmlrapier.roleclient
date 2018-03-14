@@ -1,149 +1,61 @@
 ﻿import * as client from 'hr.roleclient.RoleClient';
-import * as crudPage from 'hr.widgets.CrudPage';
+import * as hyperCrud from 'hr.widgets.HypermediaCrudService';
+import * as di from 'hr.di';
 import * as controller from 'hr.controller';
 import * as UserSearchController from 'hr.roleclient.UserSearchController';
+import * as crudPage from 'hr.widgets.CrudPage';
 import * as userDirClient from 'hr.roleclient.UserDirectoryClient';
-import * as events from 'hr.eventdispatcher';
-import * as hyperShim from 'hr.roleclient.UserHypermediaCrudShim';
+import * as standardCrudPage from 'hr.widgets.StandardCrudPage';
+import * as hyperCrudPage from 'hr.widgets.HypermediaCrudService';
 
-export interface CrudServiceExtensions {
-    editUserRoles(userId: string, name: string): Promise<any>;
-}
+export { Settings as UserCrudSettings } from 'hr.widgets.StandardCrudPage';
 
-export function HasCrudServiceExtensions(t: any): t is CrudServiceExtensions {
-    return (<CrudServiceExtensions>t).editUserRoles !== undefined;
-}
-
-export class CrudService
-    <
-    TResult extends client.RoleAssignmentsResult,
-    TResultCollection extends client.UserCollectionResult,
-    TEdit extends client.RoleAssignments,
-    TEntryResult extends client.EntryPointResult,
-    TListQueryType extends client.RoleQuery
-    >
-    extends hyperShim.HypermediaCrudService
-    implements CrudServiceExtensions {
-
-    private entryInjector: client.EntryPointInjector;
-
+export class UserCrudInjector extends hyperCrud.AbstractHypermediaPageInjector {
     public static get InjectorArgs(): controller.DiFunction<any>[] {
-        return [client.IRoleEntryInjector, UserSearchController.UserSearchController];
+        return [client.IRoleEntryInjector];
     }
 
-    constructor(entry: client.EntryPointInjector, private userSearchController: UserSearchController.UserSearchController) {
-        super(entry);
-        this.entryInjector = entry;
-        this.userSearchController.onAddManually.add(data => {
-            this.editUserRoles(data.id, data.name);
-        });
+    constructor(private injector: client.EntryPointInjector) {
+        super();
     }
 
-    protected async getActualSchema(entryPoint: TEntryResult) {
-        if (client.IsEntryPointResult(entryPoint)) {
-            return entryPoint.getSetUserDocs();
+    async list(query: any): Promise<hyperCrud.HypermediaCrudCollection> {
+        var entry = await this.injector.load();
+        if (client.IsEntryPointResult(entry)) {
+            return entry.listUsers(query);
         }
     }
 
-    protected async getActualSearchSchema(entryPoint: any) {
-        if (client.IsEntryPointWithDocsResult(entryPoint)) {
-            if (!(<client.EntryPointWithDocsResult>entryPoint).hasListUsersDocs()) {
-                throw new Error("Cannot load docs for listing users.");
-            }
-            return await (<client.EntryPointWithDocsResult>entryPoint).getListUsersDocs();
+    async canList(): Promise<boolean> {
+        var entry = await this.injector.load();
+        if (client.IsEntryPointResult(entry)) {
+            return entry.canListUsers();
         }
     }
 
-    public canAddItem(entryPoint: TEntryResult): boolean {
-        if (client.IsEntryPointResult(entryPoint)) {
-            return entryPoint.canSetUser();
-        }
-    }
-
-    public async add(item?: any) {
-        this.userSearchController.show();
-    }
-
-    protected commitAdd(entryPoint: TEntryResult, data: TEdit) {
-        if (client.IsEntryPointResult(entryPoint)) {
-            return entryPoint.setUser(data);
-        }
-    }
-
-    protected async getEditObject(item: TResult) {
-        if (item.canRefresh()) {
-            var refreshed = await item.refresh();
-            return refreshed.data;
-        }
-        return item.data;
-    }
-
-    protected commitEdit(data: TEdit, item: TResult) {
-        if (client.IsRoleAssignmentsResult(item)) {
-            return item.setUser(data);
-        }
-    }
-
-    public getDeletePrompt(item: TResult): string {
+    public getDeletePrompt(item: client.RoleAssignmentsResult): string {
         return "Are you sure you want to delete " + item.data.name + "?";
     }
 
-    protected commitDelete(item: TResult) {
-        if (client.IsRoleAssignmentsResult(item)) {
-            return item.deleteUser();
-        }
+    public getItemId(item: client.RoleAssignmentsResult): string | null {
+        return String(item.data.userId);
     }
 
-    protected canList(entryPoint: TEntryResult): boolean {
-        if (client.IsEntryPointResult(entryPoint)) {
-            return entryPoint.canListUsers();
-        }
-    }
-
-    protected list(entryPoint: TEntryResult, query: TListQueryType): Promise<client.UserCollectionResult> {
-        if (client.IsEntryPointResult(entryPoint)) {
-            return entryPoint.listUsers(query);
-        }
-    }
-
-    public canEdit(item: TResult): boolean {
-        if (client.IsRoleAssignmentsResult(item)) {
-            return item.canSetUser();
-        }
-    }
-
-    public canDel(item: TResult): boolean {
-        if (client.IsRoleAssignmentsResult(item)) {
-            return item.canDeleteUser();
-        }
-    }
-
-    public async editUserRoles(userId: string, name: string) {
-        var entryPoint = await this.entryInjector.load();
-        if (!entryPoint.canSetUser()) {
-            throw new Error("No permission to set roles.");
-        }
-
-        var roles = await entryPoint.listUsers({
-            userId: [userId],
-            name: name
-        })
-        .then(r => {
-            return r.items[0];
-        });
-
-        this.editData(roles, Promise.resolve(roles.data));
+    public createIdQuery(id: string): client.RoleQuery | null {
+        return {
+            userId: [id]
+        };
     }
 }
 
 export class UserResultController {
     public static get InjectorArgs(): controller.DiFunction<any>[] {
-        return [controller.BindingCollection, controller.InjectControllerData, crudPage.ICrudService];
+        return [controller.BindingCollection, controller.InjectControllerData, crudPage.ICrudService, hyperCrudPage.HypermediaPageInjector];
     }
 
     private editRolesToggle: controller.OnOffToggle;
 
-    constructor(bindings: controller.BindingCollection, private data: userDirClient.PersonResult, private crudService: crudPage.ICrudService) {
+    constructor(bindings: controller.BindingCollection, private data: userDirClient.PersonResult, private crudService: crudPage.ICrudService, private userCrudInjector: UserCrudInjector) {
         this.editRolesToggle = bindings.getToggle("editRoles");
         this.setup();
     }
@@ -154,14 +66,29 @@ export class UserResultController {
 
     public editRoles(evt: Event) {
         evt.preventDefault();
-        if (HasCrudServiceExtensions(this.crudService)) {
-            this.crudService.editUserRoles(this.data.data.userId, this.data.data.firstName + " " + this.data.data.lastName);
+        this.editUserRoles(this.data.data.userId, this.data.data.firstName + " " + this.data.data.lastName);
+    }
+
+    public async editUserRoles(userId: string, name: string) {
+        if (await !this.userCrudInjector.canList()) {
+            throw new Error("No permission to set roles.");
         }
+
+        var roles = await this.userCrudInjector.list({
+            userId: [userId],
+            name: name
+        });
+
+        this.crudService.edit(roles.items[0]);
     }
 }
 
-export function addServices(services: controller.ServiceCollection) {
-    services.tryAddShared(UserSearchController.UserSearchController, UserSearchController.UserSearchController); //This is overridden to be a singleton, only support 1 user search per page
-    services.tryAddTransient(UserSearchController.IUserResultController, UserResultController);
-    services.tryAddShared(crudPage.ICrudService, CrudService);
+export function addServices(builder: controller.InjectedControllerBuilder) {
+    builder.Services.tryAddShared(UserSearchController.UserSearchController, UserSearchController.UserSearchController); //This is overridden to be a singleton, only support 1 user search per page
+    builder.Services.tryAddTransient(UserSearchController.IUserResultController, UserResultController);
+    standardCrudPage.addServices(builder, UserCrudInjector);
+}
+
+export function createControllers(builder: controller.InjectedControllerBuilder, settings: standardCrudPage.Settings): void {
+    standardCrudPage.createControllers(builder, settings);
 }
