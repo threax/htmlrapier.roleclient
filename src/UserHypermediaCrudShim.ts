@@ -53,7 +53,7 @@ export abstract class HypermediaCrudService extends crudPage.ICrudService {
     public async getSearchSchema() {
         var entryPoint = await this.entry.load();
         var docs = await this.getActualSearchSchema(entryPoint);
-        return docs.requestSchema;
+        return docs.querySchema;
     }
 
     protected abstract getActualSearchSchema(entryPoint): Promise<any>;

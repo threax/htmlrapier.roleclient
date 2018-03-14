@@ -123,6 +123,32 @@ export function IsEntryPointResult(t: EntryPointResult): t is EntryPointResult {
     return true;
 }
 
+export interface EntryPointWithDocsResult {
+    getListUsersDocs(): Promise<hal.HalEndpointDoc>;
+
+    hasListUsersDocs(): boolean;
+}
+
+/**
+ * Make sure the passed in object is a correct EntryPointResult, this will return true on success and throw
+ * an error on failure.
+ * @param t
+ */
+export function IsEntryPointWithDocsResult(t: EntryPointWithDocsResult): t is EntryPointWithDocsResult {
+    var errors = "";
+    if (t.getListUsersDocs === undefined) {
+        errors += "getListUsersDocs(): Promise<hal.HalEndpointDoc>;\n";
+    }
+    if (t.hasListUsersDocs === undefined) {
+        errors += "hasListUsersDocs(): boolean;\n";
+    }
+    if (errors !== "") {
+        errors = "Cannot accept RoleAssignmentResult. The following functions are missing:\n" + errors;
+        throw new Error(errors);
+    }
+    return true;
+}
+
 export interface UserCollectionResult {
     data: UserCollection;
 

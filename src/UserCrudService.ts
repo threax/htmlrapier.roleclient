@@ -45,8 +45,13 @@ export class CrudService
         }
     }
 
-    protected async getActualSearchSchema(entryPoint: TEntryResult) {
-        throw new Error("getActualSearchSchema Not supported");
+    protected async getActualSearchSchema(entryPoint: any) {
+        if (client.IsEntryPointWithDocsResult(entryPoint)) {
+            if (!(<client.EntryPointWithDocsResult>entryPoint).hasListUsersDocs()) {
+                throw new Error("Cannot load docs for listing users.");
+            }
+            return await (<client.EntryPointWithDocsResult>entryPoint).getListUsersDocs();
+        }
     }
 
     public canAddItem(entryPoint: TEntryResult): boolean {
