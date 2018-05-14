@@ -114,6 +114,6 @@ export interface AppUserCollection {
 }
 
 export interface AppUser {
-    userId: string;
-    userName: string;
+    userId?: string;
+    userName?: string;
 }
