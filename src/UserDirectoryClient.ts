@@ -8,11 +8,11 @@ export abstract class UserSearchEntryPointInjector {
 export interface EntryPointResult {
     data: EntryPoint;
 
-    listSpcUsers(query: AppUserQuery): Promise<AppUserCollectionResult>;
+    listAppUsers(query: AppUserQuery): Promise<AppUserCollectionResult>;
 
-    canListSpcUsers(): boolean;
+    canListAppUsers(): boolean;
 
-    getListSpcUsersDocs(): Promise<hal.HalEndpointDoc>;
+    getListAppUsersDocs(): Promise<hal.HalEndpointDoc>;
 }
 
 export interface AppUserCollectionResult {
