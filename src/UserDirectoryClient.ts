@@ -1,185 +1,119 @@
 ﻿import * as hal from 'hr.halcyon.EndpointClient';
 import { Fetcher } from 'hr.fetcher';
 
-export class EntryPointInjector {
-    private url: string;
-    private fetcher: Fetcher;
-    private instance: Promise<EntryPointResult>;
-
-    constructor(url: string, fetcher: Fetcher) {
-        this.url = url;
-        this.fetcher = fetcher;
-    }
-
-    public load(): Promise<EntryPointResult> {
-        if (!this.instance) {
-            this.instance = EntryPointResult.Load(this.url, this.fetcher);
-        }
-
-        return this.instance;
-    }
+export abstract class UserSearchEntryPointInjector {
+    public abstract load(): Promise<EntryPointResult>;
 }
 
-export class EntryPointResult {
-    private client: hal.HalEndpointClient;
+export interface EntryPointResult {
+    data: EntryPoint;
 
-    public static Load(url: string, fetcher: Fetcher): Promise<EntryPointResult> {
-        return hal.HalEndpointClient.Load({
-            href: url,
-            method: "GET"
-        }, fetcher)
-            .then(c => {
-                return new EntryPointResult(c);
-            });
-    }
+    listSpcUsers(query: AppUserQuery): Promise<AppUserCollectionResult>;
 
-    constructor(client: hal.HalEndpointClient) {
-        this.client = client;
-    }
+    canListSpcUsers(): boolean;
 
-    public get data(): EntryPoint {
-        return this.client.GetData<EntryPoint>();
-    }
-
-    public refresh(): Promise<EntryPointResult> {
-        return this.client.LoadLink("self")
-            .then(r => {
-                return new EntryPointResult(r);
-            });
-    }
-
-    public canRefresh(): boolean {
-        return this.client.HasLink("self");
-    }
-
-    public getRefreshDocs(): Promise<hal.HalEndpointDoc> {
-        return this.client.LoadLinkDoc("self")
-            .then(r => {
-                return r.GetData<hal.HalEndpointDoc>();
-            });
-    }
-
-    public hasRefreshDocs(): boolean {
-        return this.client.HasLinkDoc("self");
-    }
-
-    public searchUsers(query: UserSearchModel): Promise<PersonCollectionResult> {
-        return this.client.LoadLinkWithQuery("SearchUsers", query)
-            .then(r => {
-                return new PersonCollectionResult(r);
-            });
-    }
-
-    public canSearchUsers(): boolean {
-        return this.client.HasLink("SearchUsers");
-    }
-
-    public getSearchUsersDocs(): Promise<hal.HalEndpointDoc> {
-        return this.client.LoadLinkDoc("SearchUsers")
-            .then(r => {
-                return r.GetData<hal.HalEndpointDoc>();
-            });
-    }
-
-    public hasSearchUsersDocs(): boolean {
-        return this.client.HasLinkDoc("SearchUsers");
-    }
+    getListSpcUsersDocs(): Promise<hal.HalEndpointDoc>;
 }
 
-export class PersonResult {
-    private client: hal.HalEndpointClient;
+export interface AppUserCollectionResult {
+    data: AppUserCollection;
 
-    constructor(client: hal.HalEndpointClient) {
-        this.client = client;
-    }
+    items: AppUserResult[];
 
-    public get data(): Person {
-        return this.client.GetData<Person>();
-    }
+    refresh(): Promise<AppUserCollectionResult>;
 
-    public refresh(): Promise<PersonResult> {
-        return this.client.LoadLink("self")
-            .then(r => {
-                return new PersonResult(r);
-            });
-    }
+    canRefresh(): boolean;
 
-    public canRefresh(): boolean {
-        return this.client.HasLink("self");
-    }
+    linkForRefresh(): hal.HalLink;
 
-    public getRefreshDocs(): Promise<hal.HalEndpointDoc> {
-        return this.client.LoadLinkDoc("self")
-            .then(r => {
-                return r.GetData<hal.HalEndpointDoc>();
-            });
-    }
+    getRefreshDocs(): Promise<hal.HalEndpointDoc>;
 
-    public hasRefreshDocs(): boolean {
-        return this.client.HasLinkDoc("self");
-    }
+    hasRefreshDocs(): boolean;
+
+    getGetDocs(): Promise<hal.HalEndpointDoc>;
+
+    hasGetDocs(): boolean;
+
+    getListDocs(): Promise<hal.HalEndpointDoc>;
+
+    hasListDocs(): boolean;
+
+    next(): Promise<AppUserCollectionResult>;
+
+    canNext(): boolean;
+
+    linkForNext(): hal.HalLink;
+
+    getNextDocs(): Promise<hal.HalEndpointDoc>;
+
+    hasNextDocs(): boolean;
+
+    previous(): Promise<AppUserCollectionResult>;
+
+    canPrevious(): boolean;
+
+    linkForPrevious(): hal.HalLink;
+
+    getPreviousDocs(): Promise<hal.HalEndpointDoc>;
+
+    hasPreviousDocs(): boolean;
+
+    first(): Promise<AppUserCollectionResult>;
+
+    canFirst(): boolean;
+
+    linkForFirst(): hal.HalLink;
+
+    getFirstDocs(): Promise<hal.HalEndpointDoc>;
+
+    hasFirstDocs(): boolean;
+
+    last(): Promise<AppUserCollectionResult>;
+
+    canLast(): boolean;
+
+    linkForLast(): hal.HalLink;
+
+    getLastDocs(): Promise<hal.HalEndpointDoc>;
+
+    hasLastDocs(): boolean;
 }
 
-export class PersonCollectionResult {
-    private client: hal.HalEndpointClient;
+export interface AppUserResult {
+    data: AppUser;
 
-    constructor(client: hal.HalEndpointClient) {
-        this.client = client;
-    }
+    refresh(): Promise<AppUserResult>;
 
-    public get data(): PersonCollection {
-        return this.client.GetData<PersonCollection>();
-    }
+    canRefresh(): boolean;
 
-    public get items(): PersonResult[] {
-        var embeds = this.client.GetEmbed("values");
-        var clients = embeds.GetAllClients();
-        var result: PersonResult[] = [];
-        for (var i = 0; i < clients.length; ++i) {
-            result.push(new PersonResult(clients[i]));
-        }
-        return result;
-    }
+    linkForRefresh(): hal.HalLink;
 
-    public refresh(): Promise<PersonCollectionResult> {
-        return this.client.LoadLink("self")
-            .then(r => {
-                return new PersonCollectionResult(r);
-            });
-    }
+    getRefreshDocs(): Promise<hal.HalEndpointDoc>;
 
-    public canRefresh(): boolean {
-        return this.client.HasLink("self");
-    }
-
-    public getRefreshDocs(): Promise<hal.HalEndpointDoc> {
-        return this.client.LoadLinkDoc("self")
-            .then(r => {
-                return r.GetData<hal.HalEndpointDoc>();
-            });
-    }
-
-    public hasRefreshDocs(): boolean {
-        return this.client.HasLinkDoc("self");
-    }
+    hasRefreshDocs(): boolean;
 }
+
 export interface EntryPoint {
+
 }
-export interface UserSearchModel {
-    term?: string;
+
+export interface AppUserQuery {
+    /** The number of pages (item number = Offset * Limit) into the collection to query. */
+    offset?: number;
+    /** The limit of the number of items to return. */
+    limit?: number;
 }
-export interface PersonCollection {
+
+export interface AppUserCollection {
+    //Only want page items, don't care about the rest of the data.
+    total?: number;
+    /** The number of pages (item number = Offset * Limit) into the collection to query. */
+    offset?: number;
+    /** The limit of the number of items to return. */
+    limit?: number;
 }
-export interface Person {
-    userId?: string;
-    spcId?: number;
-    userName?: string;
-    firstName?: string;
-    lastName?: string;
-    employeeEmail?: string;
-    studentEmail?: string;
-    isStudent?: boolean;
-    isEnrolled?: boolean;
-    isEmployee?: boolean;
-    isFaculty?: boolean;
+
+export interface AppUser {
+    userId: string;
+    userName: string;
 }

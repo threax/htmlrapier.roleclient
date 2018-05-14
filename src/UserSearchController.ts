@@ -17,10 +17,6 @@ export class UserSearchControllerOptions {
     setLoadingOnStart: boolean = true;
 }
 
-export interface SearchTermModel {
-    term: string;
-}
-
 export interface FromGuidModel {
     id: string;
     name: string;
@@ -31,15 +27,15 @@ export class UserSearchController implements crudItemEditor.CrudItemEditorContro
         return [controller.BindingCollection,
                 UserSearchControllerOptions,
                 controller.InjectedControllerBuilder,
-                Client.EntryPointInjector,
+                Client.UserSearchEntryPointInjector,
                 ICrudService, 
                 hyperCrudPage.HypermediaPageInjector];
     }
 
     private options: UserSearchControllerOptions;
-    private searchModel: controller.Model<SearchTermModel>;
-    private searchResultsModel: controller.Model<Client.Person>;
-    private noResultsModel: controller.Model<SearchTermModel>;
+    private searchForm: controller.IForm<Client.AppUserQuery>;
+    private searchResultsModel: controller.Model<Client.AppUser>;
+    private noResultsModel: controller.Model<Client.AppUserQuery>;
     private noResultsToggle: controller.OnOffToggle;
     private lifecycle: MainLoadErrorLifecycle;
     private entryPoint: Client.EntryPointResult;
@@ -50,15 +46,15 @@ export class UserSearchController implements crudItemEditor.CrudItemEditorContro
     constructor(bindings: controller.BindingCollection,
                 settings: UserSearchControllerOptions,
                 private builder: controller.InjectedControllerBuilder,
-                private entryPointInjector: Client.EntryPointInjector,
+                private entryPointInjector: Client.UserSearchEntryPointInjector,
                 private crudService: ICrudService, 
                 private userCrudInjector: UserCrudInjector)
     {
         this.options = settings;
         this.guidForm = bindings.getForm<FromGuidModel>(settings.guidFormName);
-        this.searchModel = bindings.getModel<SearchTermModel>("search");
-        this.searchResultsModel = bindings.getModel<Client.Person>("searchResults");
-        this.noResultsModel = bindings.getModel<SearchTermModel>("noResults");
+        this.searchForm = bindings.getForm<Client.AppUserQuery>("search");
+        this.searchResultsModel = bindings.getModel<Client.AppUser>("searchResults");
+        this.noResultsModel = bindings.getModel<Client.AppUserQuery>("noResults");
         this.noResultsToggle = bindings.getToggle("noResults");
         this.noResultsToggle.off();
 
@@ -98,7 +94,19 @@ export class UserSearchController implements crudItemEditor.CrudItemEditorContro
     private async setup() {
         try {
             this.entryPoint = await this.entryPointInjector.load();
-            if (this.entryPoint.canSearchUsers()) {
+            if (this.entryPoint.canListSpcUsers()) {
+                var listUsersDocs = await this.entryPoint.getListSpcUsersDocs();
+                var schema = listUsersDocs.querySchema ? listUsersDocs.querySchema : listUsersDocs.requestSchema;
+                //Remove common properties that we won't want on the ui
+                var properties = schema.properties;
+                if (properties) {
+                    for (var key in properties) {
+                        if (key === 'userId' || key === 'offset' || key === 'limit') {
+                            delete properties[key]; //Delete all properties that do not have x-ui-search set.
+                        }
+                    }
+                }
+                this.searchForm.setSchema(schema);
                 this.lifecycle.showMain();
             }
             else {
@@ -116,9 +124,11 @@ export class UserSearchController implements crudItemEditor.CrudItemEditorContro
     public async runSearch(evt: Event): Promise<void> {
         evt.preventDefault();
         this.lifecycle.showLoad();
-        var searchData = this.searchModel.getData();
+        var searchData = this.searchForm.getData();
         try {
-            var data = await this.entryPoint.searchUsers(searchData);
+            searchData.offset = 0;
+            searchData.limit = 10;
+            var data = await this.entryPoint.listSpcUsers(searchData);
             var listingCreator = this.builder.createOnCallback(IUserResultController);
             var items = data.items;
             this.searchResultsModel.clear();

@@ -12,7 +12,7 @@ export class UserResultController implements IUserResultController {
 
     private editRolesToggle: controller.OnOffToggle;
 
-    constructor(bindings: controller.BindingCollection, private data: userDirClient.PersonResult, private crudService: crudPage.ICrudService, private userCrudInjector: UserCrudInjector) {
+    constructor(bindings: controller.BindingCollection, private data: userDirClient.AppUserResult, private crudService: crudPage.ICrudService, private userCrudInjector: UserCrudInjector) {
         this.editRolesToggle = bindings.getToggle("editRoles");
         this.setup();
     }
@@ -23,7 +23,7 @@ export class UserResultController implements IUserResultController {
 
     public editRoles(evt: Event) {
         evt.preventDefault();
-        this.editUserRoles(this.data.data.userId, this.data.data.firstName + " " + this.data.data.lastName);
+        this.editUserRoles(this.data.data.userId, this.data.data.userName);
     }
 
     public async editUserRoles(userId: string, name: string) {
