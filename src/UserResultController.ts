@@ -12,7 +12,7 @@ export class UserResultController implements IUserResultController {
 
     private editRolesToggle: controller.OnOffToggle;
 
-    constructor(bindings: controller.BindingCollection, private data: userDirClient.AppUserResult, private crudService: crudPage.ICrudService, private userCrudInjector: UserCrudInjector) {
+    constructor(bindings: controller.BindingCollection, protected data: userDirClient.AppUserResult, private crudService: crudPage.ICrudService, private userCrudInjector: UserCrudInjector) {
         this.editRolesToggle = bindings.getToggle("editRoles");
         this.setup();
     }

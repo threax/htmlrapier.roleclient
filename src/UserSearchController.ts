@@ -169,12 +169,12 @@ export class IUserResultController {
 
 }
 
-export class UserResultController {
+export class UserResultController implements IUserResultController {
     public static get InjectorArgs(): controller.DiFunction<any>[] {
         return [controller.BindingCollection, controller.InjectControllerData];
     }
 
-    constructor(bindings: controller.BindingCollection) {
+    constructor(bindings: controller.BindingCollection, data: any) {
         
     }
 }
