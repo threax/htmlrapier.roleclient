@@ -8,17 +8,21 @@ export interface RoleAssignmentsResult {
 
     canRefresh(): boolean;
 
-    setUser(data: RoleAssignments): Promise<RoleAssignmentsResult>;
+    update(data: RoleAssignments): Promise<RoleAssignmentsResult>;
 
-    canSetUser(): boolean;
+    canUpdate(): boolean;
 
-    getSetUserDocs(): Promise<hal.HalEndpointDoc>;
+    getUpdateDocs(): Promise<hal.HalEndpointDoc>;
 
-    hasSetUserDocs(): boolean;
+    hasUpdateDocs(): boolean;
 
-    deleteUser();
+    delete();
 
-    canDeleteUser(): boolean;
+    canDelete(): boolean;
+
+    hasUpdateDocs(): boolean;
+
+    getUpdateDocs(): Promise<any>;
 }
 
 /**
@@ -34,23 +38,23 @@ export function IsRoleAssignmentsResult(t: RoleAssignmentsResult): t is RoleAssi
     if (t.canRefresh === undefined) {
         errors += "canRefresh(): boolean.\n";
     }
-    if (t.setUser === undefined) {
-        errors += "setUser(data: RoleAssignments): Promise<RoleAssignmentsResult>.\n";
+    if (t.update === undefined) {
+        errors += "update(data: RoleAssignments): Promise<RoleAssignmentsResult>.\n";
     }
-    if (t.canSetUser === undefined) {
-        errors += "canSetUser(): boolean.\n";
+    if (t.canUpdate === undefined) {
+        errors += "canUpdate(): boolean.\n";
     }
-    if (t.getSetUserDocs === undefined) {
-        errors += "getSetUserDocs(): Promise<hal.HalEndpointDoc>.\n";
+    if (t.getUpdateDocs === undefined) {
+        errors += "getUpdateDocs(): Promise<hal.HalEndpointDoc>.\n";
     }
-    if (t.hasSetUserDocs === undefined) {
-        errors += "hasSetUserDocs(): boolean.\n";
+    if (t.hasUpdateDocs === undefined) {
+        errors += "hasUpdateDocs(): boolean.\n";
     }
-    if (t.deleteUser === undefined) {
-        errors += "deleteUser().\n";
+    if (t.delete === undefined) {
+        errors += "delete().\n";
     }
-    if (t.canDeleteUser === undefined) {
-        errors += "canDeleteUser(): boolean.\n";
+    if (t.canDelete === undefined) {
+        errors += "canDelete(): boolean.\n";
     }
     if (errors !== "") {
         errors = "Cannot accept RoleAssignmentResult. The following functions are missing:\n" + errors;
@@ -79,10 +83,6 @@ export interface EntryPointResult {
     setUser(data: RoleAssignments): Promise<RoleAssignmentsResult>;
 
     canSetUser(): boolean;
-
-    getSetUserDocs(): Promise<hal.HalEndpointDoc>;
-
-    hasSetUserDocs(): boolean;
 }
 
 /**
@@ -109,12 +109,6 @@ export function IsEntryPointResult(t: EntryPointResult): t is EntryPointResult {
     }
     if (t.canSetUser === undefined) {
         errors += "canSetUser(): boolean\n";
-    }
-    if (t.getSetUserDocs === undefined) {
-        errors += "getSetUserDocs(): Promise<hal.HalEndpointDoc>\n";
-    }
-    if (t.hasSetUserDocs === undefined) {
-        errors += "hasSetUserDocs(): boolean\n";
     }
     if (errors !== "") {
         errors = "Cannot accept RoleAssignmentResult. The following functions are missing:\n" + errors;
@@ -193,6 +187,10 @@ export interface UserCollectionResult {
     getLastDocs(): Promise<hal.HalEndpointDoc>;
 
     hasLastDocs(): boolean;
+
+    getUpdateDocs(): Promise<hal.HalEndpointDoc>;
+
+    hasUpdateDocs(): boolean;
 }
 
 export interface RoleAssignments {
