@@ -286,6 +286,46 @@ class MultiUserCollectionResult implements roleClient.UserCollectionResult {
     public hasUpdateDocs(): boolean {
         return this.mainResult.hasUpdateDocs();
     }
+
+    public hasAddDocs(): boolean {
+        return this.mainResult.hasAddDocs();
+    }
+
+    public async getAddDocs(): Promise<any> {
+        var promises = [this.mainResult.getAddDocs()];
+        for (var i = 0; i < this.extendedResults.length; ++i) {
+            var extRoles = this.extendedResults[i];
+            promises.push(extRoles.getAddDocs());
+        }
+
+        var docs: hal.HalEndpointDoc[] = [];
+        for (var i = 0; i < promises.length; ++i) {
+            docs.push(await promises[i]);
+        }
+
+        var mainDocs = docs[0];
+        var mainSchema = mainDocs.requestSchema;
+
+        for (var i = 1; i < docs.length; ++i) {
+            var doc = docs[i];
+            var docSchema = doc.requestSchema;
+            for (var key in docSchema.properties) {
+                if (mainSchema.properties[key] === undefined) {
+                    mainSchema.properties[key] = docSchema.properties[key];
+                }
+            }
+        }
+
+        return mainDocs;
+    }
+
+    public add(data: any): Promise<any> {
+        return this.mainResult.add(data);
+    }
+
+    public canAdd(): boolean {
+        return this.mainResult.canAdd();
+    }
 }
 
 class MultiRoleEntryInjector implements roleClient.EntryPointInjector {

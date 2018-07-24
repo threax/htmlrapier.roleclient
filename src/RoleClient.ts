@@ -191,6 +191,14 @@ export interface UserCollectionResult {
     getUpdateDocs(): Promise<hal.HalEndpointDoc>;
 
     hasUpdateDocs(): boolean;
+
+    hasAddDocs(): boolean;
+
+    getAddDocs(): Promise<any>;
+
+    add(data: any): Promise<any>;
+
+    canAdd(): boolean;
 }
 
 export interface RoleAssignments {
