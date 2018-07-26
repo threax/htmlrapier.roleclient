@@ -96,7 +96,7 @@ export class UserSearchController implements crudItemEditor.CrudItemEditorContro
             this.entryPoint = await this.entryPointInjector.load();
             if (this.entryPoint.canListAppUsers()) {
                 var listUsersDocs = await this.entryPoint.getListAppUsersDocs();
-                var schema = listUsersDocs.querySchema ? listUsersDocs.querySchema : listUsersDocs.requestSchema;
+                var schema = listUsersDocs.requestSchema;
                 //Remove common properties that we won't want on the ui
                 var properties = schema.properties;
                 if (properties) {
