@@ -125,6 +125,9 @@ export class UserSearchController implements crudItemEditor.CrudItemEditorContro
         evt.preventDefault();
         this.lifecycle.showLoad();
         var searchData = this.searchForm.getData();
+        if (searchData === null) {
+            searchData = {};
+        }
         try {
             searchData.offset = 0;
             searchData.limit = 10;
