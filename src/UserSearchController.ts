@@ -1,12 +1,12 @@
-﻿import * as Client from 'hr.roleclient.UserDirectoryClient';
-import * as controller from 'hr.controller';
-import { MainLoadErrorLifecycle } from 'hr.widgets.MainLoadErrorLifecycle';
-import * as iter from 'hr.iterable';
-import * as event from 'hr.eventdispatcher';
-import * as crudItemEditor from 'hr.widgets.CrudItemEditor';
-import { ICrudService, ItemEditorClosedCallback, ItemUpdatedCallback, ShowItemEditorEventArgs } from 'hr.widgets.CrudService';
-import { UserCrudInjector } from 'hr.roleclient.UserCrudInjector';
-import * as hyperCrudPage from 'hr.widgets.HypermediaCrudService';
+﻿import * as Client from './UserDirectoryClient';
+import * as controller from 'htmlrapier/src/controller';
+import { MainLoadErrorLifecycle } from 'htmlrapier.widgets/src/MainLoadErrorLifecycle';
+import * as iter from 'htmlrapier/src/iterable';
+import * as event from 'htmlrapier/src/eventdispatcher';
+import * as crudItemEditor from 'htmlrapier.widgets/src/CrudItemEditor';
+import { ICrudService, ItemEditorClosedCallback, ItemUpdatedCallback, ShowItemEditorEventArgs } from 'htmlrapier.widgets/src/CrudService';
+import { UserCrudInjector } from './UserCrudInjector';
+import * as hyperCrudPage from 'htmlrapier.widgets/src/HypermediaCrudService';
 
 export class UserSearchControllerOptions {
     mainToggleName: string = "main";

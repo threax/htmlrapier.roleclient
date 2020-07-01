@@ -1,5 +1,5 @@
-import * as hal from 'hr.halcyon.EndpointClient';
-import { Fetcher } from 'hr.fetcher';
+import * as hal from 'htmlrapier.halcyon/src/EndpointClient';
+import { Fetcher } from 'htmlrapier/src/fetcher';
 
 export interface RoleAssignmentsResult {
     data: RoleAssignments;

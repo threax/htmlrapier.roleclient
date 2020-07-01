@@ -1,6 +1,6 @@
-﻿import * as roleClient from 'hr.roleclient.RoleClient';
-import * as hal from 'hr.halcyon.EndpointClient';
-import * as di from 'hr.di';
+﻿import * as roleClient from './RoleClient';
+import * as hal from 'htmlrapier.halcyon/src/EndpointClient';
+import * as di from 'htmlrapier/src/di';
 
 class MultiUserRoleAssignmentsResult implements roleClient.RoleAssignmentsResult {
     constructor(private role: roleClient.RoleAssignmentsResult, private extendedRoles: roleClient.RoleAssignmentsResult[]) {

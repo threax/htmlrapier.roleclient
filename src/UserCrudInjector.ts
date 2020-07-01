@@ -1,6 +1,6 @@
-import * as client from 'hr.roleclient.RoleClient';
-import * as hyperCrud from 'hr.widgets.HypermediaCrudService';
-import * as controller from 'hr.controller';
+import * as client from './RoleClient';
+import * as hyperCrud from 'htmlrapier.widgets/src/HypermediaCrudService';
+import * as controller from 'htmlrapier/src/controller';
 
 export class UserCrudInjector extends hyperCrud.AbstractHypermediaPageInjector {
     public static get InjectorArgs(): controller.DiFunction<any>[] {

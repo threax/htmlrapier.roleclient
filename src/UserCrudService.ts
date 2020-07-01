@@ -1,10 +1,10 @@
-﻿import * as controller from 'hr.controller';
-import * as UserSearchController from 'hr.roleclient.UserSearchController';
-import * as standardCrudPage from 'hr.widgets.StandardCrudPage';
-import { UserResultController } from 'hr.roleclient.UserResultController';
-import { UserCrudInjector } from 'hr.roleclient.UserCrudInjector';
+﻿import * as controller from 'htmlrapier/src/controller';
+import * as UserSearchController from './UserSearchController';
+import * as standardCrudPage from 'htmlrapier.widgets/src/StandardCrudPage';
+import { UserResultController } from 'htmlrapier.roleclient/src/UserResultController';
+import { UserCrudInjector } from 'htmlrapier.roleclient/src/UserCrudInjector';
 
-export { Settings as UserCrudSettings } from 'hr.widgets.StandardCrudPage';
+export { Settings as UserCrudSettings } from 'htmlrapier.widgets/src/StandardCrudPage';
 
 export function addServices(builder: controller.InjectedControllerBuilder) {
     builder.Services.tryAddShared(UserSearchController.UserSearchController, UserSearchController.UserSearchController); //This is overridden to be a singleton, only support 1 user search per page
