@@ -1,9 +1,9 @@
-import * as controller from 'hr.controller';
-import * as crudPage from 'hr.widgets.CrudPage';
-import * as hyperCrudPage from 'hr.widgets.HypermediaCrudService';
-import * as userDirClient from 'hr.roleclient.UserDirectoryClient';
-import { UserCrudInjector } from 'hr.roleclient.UserCrudInjector';
-import { IUserResultController } from 'hr.roleclient.UserSearchController';
+import * as controller from 'htmlrapier/src/controller';
+import * as crudPage from 'htmlrapier.widgets/src/CrudPage';
+import * as hyperCrudPage from 'htmlrapier.widgets/src/HypermediaCrudService';
+import * as userDirClient from './UserDirectoryClient';
+import { UserCrudInjector } from './UserCrudInjector';
+import { IUserResultController } from './UserSearchController';
 
 export class UserResultController implements IUserResultController {
     public static get InjectorArgs(): controller.DiFunction<any>[] {

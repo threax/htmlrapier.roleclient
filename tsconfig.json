@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+      "noImplicitAny": false,
+      "noEmitOnError": true,
+      "removeComments": false,
+      "sourceMap": true,
+      "noEmitHelpers": true,
+      "alwaysStrict": true,
+      "target": "es2020",
+      "outDir": "obj/tsc",
+      "module": "ES2020",
+      "baseUrl": ".",
+      "moduleResolution": "node",
+      "lib": [
+        "DOM",
+        "ES2020"
+      ]
+    },
+    "exclude": [
+      "node_modules",
+      "dist",
+      "obj"
+    ],
+    "compileOnSave": true
+  }
+  

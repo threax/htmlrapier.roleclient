@@ -1,5 +1,4 @@
-﻿import * as hal from 'hr.halcyon.EndpointClient';
-import { Fetcher } from 'hr.fetcher';
+﻿import * as hal from 'htmlrapier.halcyon/src/EndpointClient';
 
 export abstract class UserSearchEntryPointInjector {
     public abstract load(): Promise<EntryPointResult>;

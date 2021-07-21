@@ -1,9 +1,12 @@
 {
   "name": "htmlrapier.roleclient",
-  "version": "4.0.1",
+  "version": "5.0.0-pre.0",
   "dependencies": {
-    "htmlrapier.halcyon": ">=7.0.0",
-    "htmlrapier.widgets": ">=14.0.0",
-    "jsns": ">=4.2.2"
-  }
+    "htmlrapier.halcyon": "^10.0.0-pre.0",
+    "htmlrapier.widgets": "^16.0.0-pre.0"
+  },
+  "files": [
+    "src/**/*",
+    "tsimport.json"
+  ]
 }
