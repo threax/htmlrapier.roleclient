@@ -1,6 +1,6 @@
 {
   "name": "htmlrapier.roleclient",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "dependencies": {
     "htmlrapier.halcyon": "^10.0.0",
     "htmlrapier.widgets": "^16.0.0"

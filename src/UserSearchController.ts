@@ -33,8 +33,8 @@ export class UserSearchController implements crudItemEditor.CrudItemEditorContro
 
     private options: UserSearchControllerOptions;
     private searchForm: controller.IForm<Client.AppUserQuery>;
-    private searchResultsModel: controller.Model<Client.AppUser>;
-    private noResultsModel: controller.Model<Client.AppUserQuery>;
+    private searchResultsModel: controller.IView<Client.AppUser>;
+    private noResultsModel: controller.IView<Client.AppUserQuery>;
     private noResultsToggle: controller.OnOffToggle;
     private lifecycle: MainLoadErrorLifecycle;
     private entryPoint: Client.EntryPointResult;
@@ -52,8 +52,8 @@ export class UserSearchController implements crudItemEditor.CrudItemEditorContro
         this.options = settings;
         this.guidForm = bindings.getForm<FromGuidModel>(settings.guidFormName);
         this.searchForm = bindings.getForm<Client.AppUserQuery>("search");
-        this.searchResultsModel = bindings.getModel<Client.AppUser>("searchResults");
-        this.noResultsModel = bindings.getModel<Client.AppUserQuery>("noResults");
+        this.searchResultsModel = bindings.getView<Client.AppUser>("searchResults");
+        this.noResultsModel = bindings.getView<Client.AppUserQuery>("noResults");
         this.noResultsToggle = bindings.getToggle("noResults");
         this.noResultsToggle.off();
 
